@@ -1,0 +1,155 @@
+from sqlite3 import connect
+from tkinter import *
+import pymysql
+from PIL import Image,ImageTk
+conn=pymysql.connect(host='localhost',user='root',passwd='',db='ab')
+a=conn.cursor()
+def database():
+    a.execute("INSERT INTO account_details VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", (nametf.get(), acnotf.get(), phnotf.get(), emailtf.get(), addresstf.get(), dobtf.get(), adhaartf.get(), blnctf.get(), useridtf.get(), passwdtf.get()))
+    conn.commit()
+def createacfn():
+    global ca, nametf, acnotf, phnotf, emailtf, addresstf, dobtf, adhaartf, blnctf, useridtf, passwdtf
+    bm.destroy()
+    ca=Tk()
+    ca.title("CREATE ACCOUNT")
+    ca.geometry("500x500")
+    
+    
+    img=PhotoImage(file="registerbg.png")
+    img_label=Label(ca, image=img)
+    img_label.place(x=0,y=0, relwidth=1, relheight=1)
+    name=Label(ca,text="NAME",fg="blue",font=("arial",15,"bold"))
+    name.grid(column=0,row=0,padx=20)
+    nametf=Entry(ca)
+    nametf.grid(column=0,row=1)
+    acno=Label(ca,text="ACCOUNT NO",fg="blue",font=("arial",15,"bold"))
+    acno.grid(column=0,row=2,padx=20)
+    acnotf=Entry(ca)
+    acnotf.grid(column=0,row=3)
+    phno=Label(ca,text="PHONE NO",fg="blue",font=("arial",15,"bold"))
+    phno.grid(column=0,row=4,padx=20)
+    phnotf=Entry(ca)
+    phnotf.grid(column=0,row=5)
+    email=Label(ca,text="EMAIL",fg="blue",font=("arial",15,"bold"))
+    email.grid(column=0,row=6,padx=20)
+    emailtf=Entry(ca)
+    emailtf.grid(column=0,row=7)
+    address=Label(ca,text="ADDRESS",fg="blue",font=("arial",15,"bold"))
+    address.grid(column=0,row=8,padx=20)
+    addresstf=Entry(ca)
+    addresstf.grid(column=0,row=9)
+    dob=Label(ca,text="DOB",fg="blue",font=("arial",15,"bold"))
+    dob.grid(column=1,row=0,padx=20)
+    dobtf=Entry(ca)
+    dobtf.grid(column=1,row=1)
+    adhaar=Label(ca,text="ADHAAR",fg="blue",font=("arial",15,"bold"))
+    adhaar.grid(column=1,row=2,padx=20)
+    adhaartf=Entry(ca)
+    adhaartf.grid(column=1,row=3)
+    blnc=Label(ca,text="BALANCE",fg="blue",font=("arial",15,"bold"))
+    blnc.grid(column=1,row=4,padx=20)
+    blnctf=Entry(ca)
+    blnctf.grid(column=1,row=5)
+    userid=Label(ca,text="USER ID",fg="blue",font=("arial",15,"bold"))
+    userid.grid(column=1,row=6,padx=20)
+    useridtf=Entry(ca)
+    useridtf.grid(column=1,row=7)
+    passwd=Label(ca,text="PASSWORD",fg="blue",font=("arial",15,"bold"))
+    passwd.grid(column=1,row=8,padx=20)
+    passwdtf=Entry(ca)
+    passwdtf.grid(column=1,row=9)
+    regbtn=Button(ca, text="REGISTER", fg="red",font=("arial",15,"bold"), command=database)
+    regbtn.grid(column=0,row=11,pady=50)
+    homebtn=Button(ca, text="HOME", fg="red",font=("arial",15,"bold"), command=destroyca_openkl)
+    homebtn.grid(column=1,row=11,pady=50)
+    snapbtn=Button(ca, text="SNAPSHOT", fg="blue",font=("arial",15,"bold"))
+    snapbtn.grid(column=0,row=10,pady=10)
+    createacfn.mainloop()
+
+
+def acdetailsfn(): 
+    us=usertf.get()
+    pa=pdtf.get()
+    ad=Tk()
+    ad.geometry("500x500")
+    ad.title("USER DETAILS")
+    a.execute("Select * from account_details where User_id ='"+us+"' and Password='"+pa+"'" )
+    display= a.fetchone()
+    print(display)
+    name = "Name: "+display[0]
+    acno = "Account no.: "+display[1]
+    phno = "Phone no.: "+display[2]
+
+    name_label = Label(ad, text=name)
+    acno_label = Label(ad, text=acno)
+    phno_label = Label(ad, text=phno)
+    name_label.pack()
+    acno_label.pack()
+    phno_label.pack()
+
+
+    ad.mainloop()
+def loginfn():
+    global usertf,pdtf,lp
+    bm.destroy()
+    lp=Tk()
+    lp.title("LOGIN DETAILS")
+    lp.geometry("600x500")
+    img=PhotoImage(file="loginbg.png")
+    img_label=Label(lp, image=img)
+    img_label.place(x=0,y=0, relwidth=1, relheight=1)
+    user=Label(lp,text="USER ID",fg="blue",font=("arial",15,"bold"))
+    user.pack(side="top",pady=(20,0))
+    usertf=Entry(lp)
+    usertf.pack()
+    pswd=Label(lp,text="PASSWORD",fg="blue",font=("arial",15,"bold"))
+    pswd.pack(pady=(20,0))
+    pdtf=Entry(lp)
+    pdtf.pack()
+    Submit=Button(lp,text="SUBMIT",justify="center",fg="blue",font=("arial",15,"bold"),command=acdetailsfn)
+    Submit.pack(side="left",padx=20,pady=0)    
+    fgpd=Button(lp,text="FORGET PASSWORD",justify="center",fg="blue",font=("arial",15,"bold"), command=forgotfn)
+    fgpd.pack(side="left",padx=20,pady=0)
+    home=Button(lp,text="HOME",justify="center",fg="blue",font=("arial",15,"bold"), command=destroylp_openkl)
+    home.pack(side="left",padx=20,pady=0)
+    lp.mainloop()
+
+def forgotfn():
+    lp.destroy()
+    global fp
+    fp=Tk()
+    fp.title("FORGOT PASSWORD")
+    fp.geometry("400x250")
+    reset_label = Label(fp, text="RESET PASSWORD", justify="center", fg="blue",font=("arial",15,"bold"))
+    reset_label.grid(row=0,columnspan=2)
+    email_label = Label(fp, text="Registered email address: ",font=("arial",11,"bold"))
+    email_label.grid(row=1, column=0, pady=(50,0))
+    email_tf = Entry(fp, font=("arial",11,"bold"))
+    email_tf.grid(row=1, column=1,pady=(50,0))
+    send_btn = Button(fp, text="SEND LINK", font=("arial",15,"bold"), fg="white", bg="blue", justify="center")
+    send_btn.grid(row=2, columnspan=2, pady=(50,0))
+    
+
+def kl():
+    global bm
+    bm=Tk()
+    bm.title("HOME PAGE")
+    bm.geometry("500x500")
+    bm.wm_attributes("-transparentcolor", "black")
+    img=PhotoImage(file="bg.png")
+    img_label=Label(bm, image=img)
+    img_label.place(x=0,y=0, relwidth=1, relheight=1)
+    a=Label(bm,text="ALL CITIZENS BANK",justify="center",fg="white",bg="blue",bd=20,font=("TIMES NEW ROMAN",20,"bold"))
+    a.pack(side="top")
+    login=Button(bm,text="LOGIN",justify="center",fg="blue",font=("arial",15,"bold"),command=loginfn)
+    login.pack(side="left",padx=20,pady=0)
+    create=Button(bm,text="CREATE ACCOUNT",justify="center",fg="blue",font=("arial",15,"bold"),command=createacfn)
+    create.pack(side="right",padx=20,pady=0)
+    bm.mainloop()
+def destroylp_openkl():
+    lp.destroy()
+    kl()
+def destroyca_openkl():
+    ca.destroy()
+    kl()
+kl();
