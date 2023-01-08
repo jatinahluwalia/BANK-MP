@@ -94,6 +94,32 @@ def createacfn():
     snapbtn.grid(column=0,row=10,pady=10)
     ca.mainloop()
 
+def widfn():
+    base = int(dataa[7])
+    subtract = int(wid_amount_tf.get())
+    remaining = base - subtract
+    a.execute("Update account_details set Balance = %s where User_id = %s", (remaining, us))
+    conn.commit()
+    widwn.destroy()
+    messagebox.showinfo("Success","Money withdrawn successfully")
+    credit = 0
+    debit = subtract
+    a.execute("insert into transactions values (%s,%s,%s,%s,%s,%s)", (dataa[0], dataa[8], dataa[1], credit, debit, remaining))
+    conn.commit()
+
+
+def widwnfn():
+    global widwn, wid_amount_tf
+    widwn = Tk()
+    widwn.title("Withdraw Money")
+    widwn.geometry("300x300")
+    amount_label = Label(widwn, text="Amount: ", font=("arial", 11, "bold"))
+    wid_amount_tf = Entry(widwn, font=("arial", 11))
+    amount_label.grid(row=0, column=0, pady=50)
+    wid_amount_tf.grid(row=0, column=1, pady=50)
+    wid_btn = Button(widwn, text="WITHDRAW", justify="center", command=widfn)
+    wid_btn.grid(row=1, columnspan=2, pady=20)
+
 def addfn():
     base = int(dataa[7])
     surplus = int(amount_tf.get())
@@ -102,6 +128,10 @@ def addfn():
     conn.commit()
     addwn.destroy()
     messagebox.showinfo("Success","Money deposited successfully")
+    debit = 0
+    credit = surplus
+    a.execute("insert into transactions values (%s,%s,%s,%s,%s,%s)", (dataa[0], dataa[8], dataa[1], credit, debit, total))
+    conn.commit()
 
 
 def addwnfn():
@@ -111,7 +141,7 @@ def addwnfn():
     addwn.geometry("300x300")
 
     amount_label = Label(addwn, text="Amount: ", font=("arial", 11, "bold"))
-    amount_tf = Entry(addwn, font=("arial", 11, ))
+    amount_tf = Entry(addwn, font=("arial", 11))
     amount_label.grid(row=0, column=0, pady=50)
     amount_tf.grid(row=0, column=1, pady=50)
     add_btn = Button(addwn, text="ADD", justify="center", command=addfn)
@@ -137,7 +167,6 @@ def login_data_check():
     #PASSWORD CHECK
     a.execute("select Password from account_details where User_id = %s", (usertf.get()))
     pswdd = a.fetchone()[0]
-    print(pswdd)
     if pswdd == pdtf.get():
         acdetailsfn()
     else:
@@ -154,12 +183,12 @@ def acdetailsfn():
     ad.title("USER DETAILS")
     a.execute("Select * from account_details where User_id ='"+us+"' and Password='"+pa+"'" )
     dataa= a.fetchone()
-    print(dataa)
     name = "Name: "+dataa[0]
     acno = "Account no.: "+dataa[1]
     phno = "Phone no.: "+dataa[2]
     bal = "Balance: "+str(dataa[7])
     add_btn = Button(ad, text="ADD MONEY", font=("arial", 15, "bold"), command=addwnfn) 
+    wid_btn = Button(ad, text="WITHDRAW MONEY", font=("arial", 15, "bold"), command=widwnfn)
     name_label = Label(ad, text=name)
     acno_label = Label(ad, text=acno)
     phno_label = Label(ad, text=phno)
@@ -170,7 +199,7 @@ def acdetailsfn():
     phno_label.pack()
     bal_label.pack()
     add_btn.pack()
-
+    wid_btn.pack()
     ad.mainloop()
 def loginfn():
     global usertf,pdtf,lp
