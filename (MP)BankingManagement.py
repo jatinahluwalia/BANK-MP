@@ -4,6 +4,7 @@ from tkinter import messagebox
 import pymysql
 from PIL import Image,ImageTk
 import random
+import cv2 as cv
 conn=pymysql.connect(host='localhost',user='root',passwd='',db='ab')
 a=conn.cursor()
 def database():
@@ -43,7 +44,18 @@ def database():
     a.execute("INSERT INTO account_details VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", (nametf.get(), acnotf, phnotf.get(), emailtf.get(), addresstf.get(), dobtf.get(), adhaartf.get(),0 , useridtf.get(), passwdtf.get()))
     conn.commit()
     messagebox.showinfo("Registeration Successfull", "Your account has been created please login to add or withraw money.")
-            
+
+def photo():
+    cam = cv.VideoCapture(0)
+    s, img = cam.read()
+    if s:
+        cv.namedWindow("cam-test")
+        cv.imshow("cam-test",img)
+        cv.waitKey(0)
+        cv.destroyWindow("cam-test")
+        filename = "image"+str(random.randint(100000,999999))
+        cv.imwrite("filename.jpg",img)
+
 def createacfn():
     global ca, nametf, acnotf, phnotf, emailtf, addresstf, dobtf, adhaartf, useridtf, passwdtf
     bm.destroy()
@@ -90,7 +102,7 @@ def createacfn():
     regbtn.grid(column=0,row=11,pady=50)
     homebtn=Button(ca, text="HOME", fg="red",font=("arial",15,"bold"), command=destroyca_openkl)
     homebtn.grid(column=1,row=11,pady=50)
-    snapbtn=Button(ca, text="SNAPSHOT", fg="blue",font=("arial",15,"bold"))
+    snapbtn=Button(ca, text="SNAPSHOT", fg="blue",font=("arial",15,"bold"), command=photo)
     snapbtn.grid(column=0,row=10,pady=10)
     ca.mainloop()
 
