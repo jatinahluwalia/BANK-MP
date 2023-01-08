@@ -1,20 +1,56 @@
 from sqlite3 import connect
 from tkinter import *
+from tkinter import messagebox
 import pymysql
 from PIL import Image,ImageTk
+import random
 conn=pymysql.connect(host='localhost',user='root',passwd='',db='ab')
 a=conn.cursor()
 def database():
-    a.execute("INSERT INTO account_details VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", (nametf.get(), acnotf.get(), phnotf.get(), emailtf.get(), addresstf.get(), dobtf.get(), adhaartf.get(), blnctf.get(), useridtf.get(), passwdtf.get()))
+    #USERID CHECKER
+    a.execute("select User_id from account_details")
+    userdata = a.fetchall()
+    userrows = len(userdata)
+    i = 0
+    while i < userrows:
+        if useridtf.get() == userdata[i][0]:
+            messagebox.showerror("Error", "Username already exists")
+            return
+        i+=1
+    
+    #PHONE NUMBER CHECKER
+    a.execute("select Phone_no from account_details")
+    phonedata = a.fetchall()
+    phonerows = len(phonedata)
+    j = 0
+    while j < phonerows:
+        if phnotf.get() == phonedata[j][0]:
+            messagebox.showerror("Error", "Phone number already exists")
+            return
+        j+=1
+
+    #EMAIL CHECKER
+    a.execute("select Email from account_details")
+    emaildata = a.fetchall()
+    emailrows = len(emaildata)
+    k = 0
+    while k < emailrows:
+        if emailtf.get() == emaildata[k][0]:
+            messagebox.showerror("Error", "Email address already exists")
+            return
+        k+=1
+    
+    a.execute("INSERT INTO account_details VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", (nametf.get(), acnotf, phnotf.get(), emailtf.get(), addresstf.get(), dobtf.get(), adhaartf.get(),0 , useridtf.get(), passwdtf.get()))
     conn.commit()
+    messagebox.showinfo("Registeration Successfull", "Your account has been created please login to add or withraw money.")
+            
 def createacfn():
-    global ca, nametf, acnotf, phnotf, emailtf, addresstf, dobtf, adhaartf, blnctf, useridtf, passwdtf
+    global ca, nametf, acnotf, phnotf, emailtf, addresstf, dobtf, adhaartf, useridtf, passwdtf
     bm.destroy()
     ca=Tk()
     ca.title("CREATE ACCOUNT")
     ca.geometry("500x500")
-    
-    
+    acnotf = str(random.randint(1000000000,9999999999))
     img=PhotoImage(file="registerbg.png")
     img_label=Label(ca, image=img)
     img_label.place(x=0,y=0, relwidth=1, relheight=1)
@@ -22,14 +58,10 @@ def createacfn():
     name.grid(column=0,row=0,padx=20)
     nametf=Entry(ca)
     nametf.grid(column=0,row=1)
-    acno=Label(ca,text="ACCOUNT NO",fg="blue",font=("arial",15,"bold"))
-    acno.grid(column=0,row=2,padx=20)
-    acnotf=Entry(ca)
-    acnotf.grid(column=0,row=3)
     phno=Label(ca,text="PHONE NO",fg="blue",font=("arial",15,"bold"))
-    phno.grid(column=0,row=4,padx=20)
+    phno.grid(column=0,row=2,padx=20)
     phnotf=Entry(ca)
-    phnotf.grid(column=0,row=5)
+    phnotf.grid(column=0,row=3)
     email=Label(ca,text="EMAIL",fg="blue",font=("arial",15,"bold"))
     email.grid(column=0,row=6,padx=20)
     emailtf=Entry(ca)
@@ -46,10 +78,6 @@ def createacfn():
     adhaar.grid(column=1,row=2,padx=20)
     adhaartf=Entry(ca)
     adhaartf.grid(column=1,row=3)
-    blnc=Label(ca,text="BALANCE",fg="blue",font=("arial",15,"bold"))
-    blnc.grid(column=1,row=4,padx=20)
-    blnctf=Entry(ca)
-    blnctf.grid(column=1,row=5)
     userid=Label(ca,text="USER ID",fg="blue",font=("arial",15,"bold"))
     userid.grid(column=1,row=6,padx=20)
     useridtf=Entry(ca)
@@ -64,29 +92,84 @@ def createacfn():
     homebtn.grid(column=1,row=11,pady=50)
     snapbtn=Button(ca, text="SNAPSHOT", fg="blue",font=("arial",15,"bold"))
     snapbtn.grid(column=0,row=10,pady=10)
-    createacfn.mainloop()
+    ca.mainloop()
+
+def addfn():
+    base = int(dataa[7])
+    surplus = int(amount_tf.get())
+    total = base + surplus
+    a.execute("Update account_details set Balance = %s where User_id = %s", (total, us))
+    conn.commit()
+    addwn.destroy()
+    messagebox.showinfo("Success","Money deposited successfully")
+
+
+def addwnfn():
+    global addwn, amount_tf
+    addwn = Tk()
+    addwn.title("ADD MONEY")
+    addwn.geometry("300x300")
+
+    amount_label = Label(addwn, text="Amount: ", font=("arial", 11, "bold"))
+    amount_tf = Entry(addwn, font=("arial", 11, ))
+    amount_label.grid(row=0, column=0, pady=50)
+    amount_tf.grid(row=0, column=1, pady=50)
+    add_btn = Button(addwn, text="ADD", justify="center", command=addfn)
+    add_btn.grid(row=1, columnspan=2, pady=20)
+
+def login_data_check():
+    #USER ID CHECK
+    a.execute("select User_id from account_details")
+    userdata = a.fetchall()
+    userrows = len(userdata)
+    i = 0
+    userexists = False
+    while i < userrows:
+        if usertf.get() != userdata[i][0]:
+            i+=1
+            continue
+        else:
+            userexists = True
+            break
+    if userexists == False:
+        messagebox.showerror("Error","User doesn't exist")
+        return
+    #PASSWORD CHECK
+    a.execute("select Password from account_details where User_id = %s", (usertf.get()))
+    pswdd = a.fetchone()[0]
+    print(pswdd)
+    if pswdd == pdtf.get():
+        acdetailsfn()
+    else:
+        messagebox.showerror("Error","Incorrect Password")
+
 
 
 def acdetailsfn(): 
+    global ad, dataa, us
     us=usertf.get()
     pa=pdtf.get()
     ad=Tk()
     ad.geometry("500x500")
     ad.title("USER DETAILS")
     a.execute("Select * from account_details where User_id ='"+us+"' and Password='"+pa+"'" )
-    display= a.fetchone()
-    print(display)
-    name = "Name: "+display[0]
-    acno = "Account no.: "+display[1]
-    phno = "Phone no.: "+display[2]
-
+    dataa= a.fetchone()
+    print(dataa)
+    name = "Name: "+dataa[0]
+    acno = "Account no.: "+dataa[1]
+    phno = "Phone no.: "+dataa[2]
+    bal = "Balance: "+str(dataa[7])
+    add_btn = Button(ad, text="ADD MONEY", font=("arial", 15, "bold"), command=addwnfn) 
     name_label = Label(ad, text=name)
     acno_label = Label(ad, text=acno)
     phno_label = Label(ad, text=phno)
+    bal_label = Label(ad, text=bal)
+    
     name_label.pack()
     acno_label.pack()
     phno_label.pack()
-
+    bal_label.pack()
+    add_btn.pack()
 
     ad.mainloop()
 def loginfn():
@@ -106,7 +189,7 @@ def loginfn():
     pswd.pack(pady=(20,0))
     pdtf=Entry(lp)
     pdtf.pack()
-    Submit=Button(lp,text="SUBMIT",justify="center",fg="blue",font=("arial",15,"bold"),command=acdetailsfn)
+    Submit=Button(lp,text="SUBMIT",justify="center",fg="blue",font=("arial",15,"bold"),command=login_data_check)
     Submit.pack(side="left",padx=20,pady=0)    
     fgpd=Button(lp,text="FORGET PASSWORD",justify="center",fg="blue",font=("arial",15,"bold"), command=forgotfn)
     fgpd.pack(side="left",padx=20,pady=0)

@@ -1,0 +1,3 @@
+add money
+password correct only login (otherwise message popup incorrect)
+userid should not be duplicate while registering
