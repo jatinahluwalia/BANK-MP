@@ -53,8 +53,8 @@ def photo():
         cv.imshow("cam-test",img)
         cv.waitKey(0)
         cv.destroyWindow("cam-test")
-        filename = "image"+str(random.randint(100000,999999))
-        cv.imwrite("filename.jpg",img)
+        filename = "image"+str(random.randint(100000,999999))+".jpg"
+        cv.imwrite(filename,img)
 
 def createacfn():
     global ca, nametf, acnotf, phnotf, emailtf, addresstf, dobtf, adhaartf, useridtf, passwdtf
