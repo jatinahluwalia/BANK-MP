@@ -53,7 +53,7 @@ def photo():
         cv.imshow("cam-test",img)
         cv.waitKey(0)
         cv.destroyWindow("cam-test")
-        filename = "image"+str(random.randint(100000,999999))+".jpg"
+        filename = "snapshots/image"+str(random.randint(100000,999999))+".jpg"
         cv.imwrite(filename,img)
 
 def createacfn():
