@@ -176,11 +176,16 @@ def login_data_check():
 
 def acdetailsfn(): 
     global ad, dataa, us
+    
     us=usertf.get()
     pa=pdtf.get()
+    lp.destroy()
     ad=Tk()
     ad.geometry("500x500")
     ad.title("USER DETAILS")
+    img=PhotoImage(file="detailsbg.png")
+    img_label=Label(ad, image=img)
+    img_label.place(x=0,y=0, relwidth=1, relheight=1)
     a.execute("Select * from account_details where User_id ='"+us+"' and Password='"+pa+"'" )
     dataa= a.fetchone()
     name = "Name: "+dataa[0]
@@ -189,12 +194,12 @@ def acdetailsfn():
     bal = "Balance: "+str(dataa[7])
     add_btn = Button(ad, text="ADD MONEY", font=("arial", 15, "bold"), command=addwnfn) 
     wid_btn = Button(ad, text="WITHDRAW MONEY", font=("arial", 15, "bold"), command=widwnfn)
-    name_label = Label(ad, text=name)
-    acno_label = Label(ad, text=acno)
-    phno_label = Label(ad, text=phno)
-    bal_label = Label(ad, text=bal)
+    name_label = Label(ad, text=name, font=("arial", 11), bg="white")
+    acno_label = Label(ad, text=acno, font=("arial", 11), bg="white")
+    phno_label = Label(ad, text=phno, font=("arial", 11), bg="white")
+    bal_label = Label(ad, text=bal, font=("arial", 11), bg="white")
     
-    name_label.pack()
+    name_label.pack(pady=(100,0))
     acno_label.pack()
     phno_label.pack()
     bal_label.pack()
