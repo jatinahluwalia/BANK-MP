@@ -206,17 +206,22 @@ def acdetailsfn():
     bal = "Balance: "+str(dataa[7])
     add_btn = Button(ad, text="ADD MONEY", font=("arial", 15, "bold"), command=addwnfn) 
     wid_btn = Button(ad, text="WITHDRAW MONEY", font=("arial", 15, "bold"), command=widwnfn)
+    logout_btn = Button(ad, text="LOGOUT", font=("arial", 15, "bold"), command=destroy_login_and_pull_home)
     name_label = Label(ad, text=name, font=("arial", 11), bg="white")
     acno_label = Label(ad, text=acno, font=("arial", 11), bg="white")
     phno_label = Label(ad, text=phno, font=("arial", 11), bg="white")
     bal_label = Label(ad, text=bal, font=("arial", 11), bg="white")
-    
+
+
     name_label.pack(pady=(100,0))
     acno_label.pack()
     phno_label.pack()
     bal_label.pack()
     add_btn.pack()
     wid_btn.pack()
+    logout_btn.pack(pady=(100,0))
+
+
     ad.mainloop()
 def loginfn():
     global usertf,pdtf,lp
@@ -280,5 +285,8 @@ def destroylp_openkl():
     kl()
 def destroyca_openkl():
     ca.destroy()
+    kl()
+def destroy_login_and_pull_home():
+    ad.destroy()
     kl()
 kl();
